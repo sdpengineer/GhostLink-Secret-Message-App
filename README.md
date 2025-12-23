@@ -1,5 +1,4 @@
-# GhostLink-Secret-Message-App
-A secure, zero-knowledge secret message app developed by S Deva Prasad (SDP).
+
 # GhostLink // Secret Message App
 
 ### Developed by S Deva Prasad (SDP)
