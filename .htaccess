@@ -1,0 +1,8 @@
+php_value upload_max_filesize 30M
+php_value post_max_size 30M
+ErrorDocument 403 https://sdp.page.gd/403.html
+ErrorDocument 404 https://sdp.page.gd/404.html
+ErrorDocument 500 https://sdp.page.gd/500.html
+ErrorDocument 400 https://sdp.page.gd/400.html
+ErrorDocument 401 https://sdp.page.gd/401.html
+ErrorDocument 503 https://sdp.page.gd/503.html

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 // Lost in the Void</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ff41;
+            font-family: 'Courier Prime', monospace;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* --- THE CUTE GHOST ANIMATION --- */
+        .ghost {
+            position: relative;
+            width: 100px;
+            height: 120px;
+            background: #00ff41;
+            border-radius: 50px 50px 0 0;
+            box-shadow: 0 0 20px #00ff41;
+            animation: float 3s ease-in-out infinite;
+        }
+        .ghost::after { /* The wavy bottom */
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: radial-gradient(circle, #00ff41 50%, transparent 50%);
+            background-size: 20px 20px;
+        }
+        .eyes {
+            position: absolute;
+            top: 40px;
+            left: 20px;
+            width: 15px;
+            height: 15px;
+            background: #000;
+            border-radius: 50%;
+            box-shadow: 45px 0 0 #000; /* Right eye */
+            animation: blink 4s infinite;
+        }
+        .cheeks {
+            position: absolute;
+            top: 55px;
+            left: 15px;
+            width: 25px;
+            height: 10px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            box-shadow: 45px 0 0 rgba(0,0,0,0.1); /* Right cheek */
+        }
+        .shadow {
+            width: 80px;
+            height: 10px;
+            background: rgba(0, 255, 65, 0.2);
+            border-radius: 50%;
+            margin-top: 30px;
+            animation: shadowScale 3s ease-in-out infinite;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes shadowScale {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(0.8); opacity: 0.1; }
+        }
+        @keyframes blink {
+            0%, 96%, 100% { height: 15px; }
+            98% { height: 2px; transform: translateY(7px); }
+        }
+
+        /* --- TEXT STYLES --- */
+        h1 { font-size: 5rem; margin: 20px 0 0; text-shadow: 0 0 10px #00ff41; }
+        p { color: #aaa; margin-bottom: 30px; }
+        .btn {
+            text-decoration: none;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            padding: 10px 30px;
+            border-radius: 30px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 20px #00ff41; }
+    </style>
+</head>
+<body>
+
+    <div class="ghost">
+        <div class="eyes"></div>
+        <div class="cheeks"></div>
+    </div>
+    <div class="shadow"></div>
+
+    <h1>404</h1>
+    <p>GHOST NOT FOUND<br>The file you are looking for has vanished.</p>
+    
+    <a href="index.php" class="btn">RETURN TO BASE</a>
+
+</body>
+</html>
