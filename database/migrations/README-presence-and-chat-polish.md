@@ -1,7 +1,7 @@
-# Dashboard polish deployment
+# Chat polish database migration
 
-This update adds server-backed typing state, unread/read receipts, reactions, view-once messages, and clear-chat handling.
+For an existing database, back it up and apply `2026-11-07-view-once-messages.sql` first if the `messages.view_once`, `messages.viewed_at`, and `messages.attachment_path` columns are not present. Then apply `2026-11-09-presence-and-chat-polish.sql` to add any missing read/reaction tables and the typing-state table. The latter migration is safe to rerun because it uses `CREATE TABLE IF NOT EXISTS` and does not attempt to add columns already managed by the earlier migration.
 
-For an existing database, back it up and apply `database/migrations/2026-11-09-presence-and-chat-polish.sql` once before deploying. It adds the `message_reads`, `message_reactions`, and `chat_typing` tables plus view-once/attachment metadata columns on `messages`.
+New installations should use the current `database/schema.sql`, which includes view-once columns and the typing table, and may run the presence migration if they need migration-created auxiliary tables.
 
-The migration is for the database state that predates these tables/columns. Do not run it a second time without checking the schema, since the `ALTER TABLE` and index creation are intentionally not repeatable. View-once is best-effort server deletion and cannot prevent screenshots or copies made before the viewer closes the content.
+View-once content is deleted server-side after closing (and stale viewed messages are swept on subsequent engine requests); it cannot prevent screenshots or copies made before deletion.
