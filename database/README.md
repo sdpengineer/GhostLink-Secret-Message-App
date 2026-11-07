@@ -13,4 +13,4 @@ The repository cannot provision a live database or know your host credentials. T
 
 `assets/themes/ghostlink.css` is the current shared theme layer. It defines CSS tokens and appearance preferences for the Glass, Aurora, Midnight, and Rose palettes. Add new palettes by extending its `body[data-theme="..."]` token declarations and the theme selector in `assets/theme-settings.js`.
 
-The settings script saves appearance, density, font size, and animation preferences in browser local storage. Browser-level preferences work without database setup; account-synchronized preferences can be layered onto the `user_settings` table later.
+The settings script saves appearance, density, font size, and animation preferences in browser local storage. Existing `ghostlink.preferences` values are preserved and migrated to `sdplink.preferences` on first load. Browser-level preferences work without database setup; account-synchronized preferences can be layered onto the `user_settings` table later.
