@@ -1,402 +1,67 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) { 
-    header("Location: index.php?page=login&error=Access Denied"); 
-    exit(); 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.php?page=login&error=Access%20Denied');
+    exit();
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GhostLink // Terminal</title>
-    <link rel="icon" href="sdpGhostlink.png" type="image/png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d17">
+    <title>Messages — GhostLink</title>
+    <link rel="icon" href="sdpGhostlink.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* BASE STYLES */
-        body { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
-        
-        /* CYAN SIDEBAR BUTTONS */
-        .sb-btn { background: none; border: 1px solid #00ffff; color: #00ffff; padding: 5px 10px; cursor: pointer; text-decoration: none; margin: 0 5px; font-weight: bold; transition: 0.3s; }
-        .sb-btn:hover { background: #00ffff; color: #000; box-shadow: 0 0 10px #00ffff; }
-
-        /* TOAST NOTIFICATION */
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #0d0d0d; color: #00ff41;
-            text-align: center; border: 1px solid #00ff41; border-radius: 4px; padding: 15px;
-            position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); font-weight: bold; font-size: 14px;
-        }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-        /* LAYOUT */
-        .sidebar { width: 30%; border-right: 2px solid #333; padding: 0; display: flex; flex-direction: column; background: #050505; }
-        .chat-area { width: 70%; display: flex; flex-direction: column; background: #000; position: relative; }
-        
-        /* SIDEBAR COMPONENTS */
-        .sb-header { padding: 15px; border-bottom: 1px solid #333; background: #111; }
-        .search-box { width: 90%; background: #000; border: 1px solid #333; color: #00ff41; padding: 8px; font-family: inherit; }
-        .user-list { flex: 1; overflow-y: auto; padding: 10px; }
-        
-        .user-card { padding: 12px; border: 1px solid #222; margin-bottom: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; background: #0a0a0a; }
-        .user-card:hover { background: #1a1a1a; border-color: #00ff41; }
-        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        
-        .sb-footer { padding: 15px; border-top: 1px solid #333; text-align: center; font-size: 12px; }
-
-        /* CHAT COMPONENTS */
-        .chat-header { padding: 15px; border-bottom: 2px solid #333; background: #111; display: flex; justify-content: space-between; align-items: center; }
-        .messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        
-        .msg { max-width: 60%; padding: 10px; border-radius: 5px; font-size: 14px; word-wrap: break-word; position: relative; }
-        .msg.sent { align-self: flex-end; background: #003300; border: 1px solid #00ff41; color: #ccffcc; }
-        .msg.received { align-self: flex-start; background: #1a1a1a; border: 1px solid #555; color: #aaa; }
-        
-        /* IMAGE & FILE LINKS */
-        .file-link { color: #00ffff; text-decoration: underline; cursor: pointer; display:block; margin-top:5px; }
-        .chat-img { max-width: 100%; border: 1px solid #00ff41; margin-top: 5px; cursor: pointer; display: block; }
-
-        .msg-time {
-            display: block; font-size: 10px; margin-top: 5px; text-align: right; opacity: 0.7;
-            font-family: 'Courier New', monospace; border-top: 1px solid rgba(0, 255, 65, 0.2); padding-top: 2px;
-        }
-        .msg.sent .msg-time { color: #00ff41; }
-        .msg.received .msg-time { color: #888; }
-
-        /* INPUT AREA */
-        .input-zone { padding: 20px; border-top: 2px solid #333; background: #111; display: flex; gap: 10px; align-items: center; }
-        input[type="text"], input[type="password"] { background: #000; border: 1px solid #333; color: #00ff41; padding: 10px; font-family: inherit; }
-        #secretKey { width: 100px; border-color: #ff3333; color: #ff3333; text-align:center; }
-        #secretKey:focus { border-color: #00ff41; color: #00ff41; }
-
-        button.send-btn { background: #00ff41; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
-        
-        /* ATTACHMENT BUTTON */
-        .attach-btn { cursor: pointer; background: #222; border: 1px solid #555; color: #fff; padding: 10px; }
-        .attach-btn:hover { border-color: #00ff41; color: #00ff41; }
-
-        .hidden { display: none !important; }
-
-        /* CONTEXT MENU */
-        #contextMenu { position: absolute; background: #111; border: 1px solid #00ff41; z-index: 9999; padding: 5px 0; display: none; width: 150px; box-shadow: 0 0 10px #000; }
-        #contextMenu div { padding: 10px 15px; cursor: pointer; font-size: 12px; color: #fff; }
-        #contextMenu div:hover { background: #00ff41; color: #000; }
-
-        /* MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; }
-        .modal-box { background: #111; border: 2px solid #00ff41; padding: 20px; width: 300px; text-align: center; box-shadow: 0 0 20px #003300; }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; width: 100%; height: 100%; position: absolute; z-index: 20; }
-            .sidebar.active { display: flex; }
-            .chat-area { width: 100%; }
-            .msg { max-width: 85%; }
-            #secretKey { width: 60px; font-size: 10px; }
-        }
+        :root{color-scheme:dark;--bg:#090d17;--panel:rgba(20,27,44,.68);--line:rgba(255,255,255,.1);--text:#f2f5fb;--muted:#929caf;--mint:#83ecc4;--blue:#91a9ff;--pink:#d6a5ff;--danger:#ff9da7}
+        *{box-sizing:border-box}body{margin:0;min-height:100vh;overflow:hidden;color:var(--text);font:14px 'DM Sans',sans-serif;background:radial-gradient(ellipse at 5% 0,rgba(79,116,255,.18),transparent 34%),radial-gradient(ellipse at 95% 100%,rgba(82,222,184,.12),transparent 34%),var(--bg)}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+        .app{height:100vh;padding:18px;display:grid;grid-template-columns:310px minmax(0,1fr);gap:16px;position:relative;z-index:1}.glass{background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 20px 70px rgba(0,0,0,.25)}.sidebar,.chat{min-height:0;border-radius:22px;overflow:hidden;animation:panel-in .6s both}.sidebar{display:flex;flex-direction:column;animation-delay:.06s}.side-head{padding:23px 20px 18px;border-bottom:1px solid var(--line)}.brand{font:700 1.18rem 'Space Grotesk',sans-serif;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}.brand img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(120,240,194,.35))}.brand span{color:var(--mint)}.subline{color:var(--muted);font-size:.8rem;margin:12px 0 17px}.search{width:100%;padding:11px 13px;border-radius:12px;border:1px solid var(--line);background:rgba(3,7,14,.45);color:var(--text);font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}.search:focus,.key-input:focus,.input:focus,.modal input:focus{border-color:rgba(131,236,196,.6);box-shadow:0 0 0 3px rgba(131,236,196,.08)}.list-label{padding:17px 20px 7px;text-transform:uppercase;letter-spacing:.1em;color:#818ba0;font-size:.68rem;font-weight:700}.user-list{flex:1;overflow:auto;padding:6px 10px}.user-card{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 11px;margin-bottom:5px;border:1px solid transparent;border-radius:14px;color:#e8ecf5;cursor:pointer;transition:background .2s,border-color .2s,transform .2s;animation:row-in .38s both}.user-card:hover{background:rgba(255,255,255,.055);border-color:var(--line);transform:translateX(3px)}.user-card b{font-weight:600}.user-card div{min-width:0}.user-card div div{color:var(--muted)!important}.user-card span:last-child{font-size:.63rem!important;letter-spacing:.05em}.user-card .status-dot{width:8px;height:8px;border-radius:50%;margin-right:8px}.side-foot{display:flex;flex-wrap:wrap;gap:8px;padding:13px;border-top:1px solid var(--line)}.side-link{flex:1;text-align:center;padding:9px 7px;border:1px solid var(--line);border-radius:10px;color:#c7cfdf;font-size:.76rem;transition:all .2s}.side-link:hover{color:var(--mint);border-color:rgba(131,236,196,.35);background:rgba(131,236,196,.06)}.side-link.abort{color:#ff9da7}.chat{display:flex;flex-direction:column;position:relative}.chat-head{min-height:76px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.head-left{display:flex;align-items:center;gap:12px;min-width:0}.target{font:600 1rem 'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.target-sub{font-size:.75rem;color:var(--muted);margin-top:4px}.head-actions{display:flex;align-items:center;gap:10px}.key-wrap{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:.76rem}.key-input,.input,.modal input{font:inherit;color:var(--text);background:rgba(3,7,14,.5);border:1px solid var(--line);border-radius:11px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s}.key-input{width:150px}.messages{flex:1;min-height:0;overflow:auto;padding:24px clamp(16px,5vw,60px);display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.empty{margin:auto;text-align:center;color:var(--muted);line-height:1.8;max-width:320px;animation:fade-in .7s both}.empty img{width:60px;height:60px;object-fit:contain;opacity:.75;margin-bottom:12px;filter:drop-shadow(0 0 20px rgba(131,236,196,.15))}.msg{max-width:min(70%,560px);padding:12px 15px;border-radius:17px;line-height:1.55;overflow-wrap:anywhere;white-space:pre-wrap;animation:message-in .28s both}.msg.sent{align-self:flex-end;background:linear-gradient(135deg,rgba(131,236,196,.17),rgba(145,169,255,.13));border:1px solid rgba(131,236,196,.2);border-bottom-right-radius:5px;color:#edfdf6}.msg.received{align-self:flex-start;background:rgba(255,255,255,.065);border:1px solid var(--line);border-bottom-left-radius:5px;color:#e5e9f2}.msg-time{display:block;font-size:.65rem;color:#9ca6b8;text-align:right;margin-top:7px}.file-link{display:inline-block;color:var(--mint);text-decoration:underline;margin-top:5px}.chat-img{display:block;max-width:100%;max-height:300px;border-radius:11px;cursor:pointer}.input-zone{display:flex;align-items:center;gap:10px;padding:15px 20px;border-top:1px solid var(--line);background:rgba(5,9,16,.22)}.attach,.send,.icon-btn{border:0;cursor:pointer;color:var(--text);font:600 .88rem 'DM Sans',sans-serif;border-radius:11px;padding:11px 14px;transition:transform .18s,filter .18s,background .18s}.attach,.icon-btn{background:rgba(255,255,255,.07);border:1px solid var(--line)}.attach:hover,.icon-btn:hover{color:var(--mint);transform:translateY(-2px)}.input{flex:1;min-width:0;padding:12px 14px}.send{background:linear-gradient(135deg,#a2f4d5,#85e6d0);color:#09120f;padding:12px 19px}.send:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 8px 24px rgba(131,236,196,.16)}.hidden{display:none!important}.mobile-menu{display:none}
+        #toast{position:fixed;z-index:40;bottom:25px;left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:12px 17px;border-radius:12px;background:rgba(22,29,46,.95);border:1px solid var(--line);box-shadow:0 12px 40px #0005;transition:.2s}#toast.show{opacity:1;transform:translate(-50%,0)}#contextMenu{position:fixed;z-index:25;display:none;padding:6px;border-radius:12px;background:rgba(22,29,46,.97);border:1px solid var(--line);backdrop-filter:blur(15px);box-shadow:0 12px 40px #0007}#contextMenu div{padding:10px 14px;border-radius:8px;cursor:pointer;color:#ffb5bd;font-size:.82rem}#contextMenu div:hover{background:rgba(255,120,140,.1)}.modal-overlay{position:fixed;z-index:30;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,5,11,.72);backdrop-filter:blur(9px);animation:fade-in .2s}.modal{width:min(420px,100%);padding:26px;border-radius:20px;animation:modal-in .28s both}.modal h2{font:600 1.3rem 'Space Grotesk',sans-serif;margin:0 0 20px}.modal input{display:block;width:100%;margin-bottom:12px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px}.modal-actions button{font:600 .82rem 'DM Sans',sans-serif}.icon-btn{font-size:1.05rem;padding:8px 11px}
+        @keyframes panel-in{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes row-in{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:translateX(0)}}@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes message-in{from{opacity:0;transform:translateY(7px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes modal-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        @media(max-width:760px){body{overflow:hidden}.app{padding:0;display:block}.sidebar{position:fixed;z-index:10;inset:10px auto 10px 10px;width:min(330px,calc(100vw - 20px));display:none}.sidebar.active{display:flex;animation:panel-in .22s both}.chat{height:100dvh;border:0;border-radius:0}.mobile-menu{display:inline-flex}.chat-head{padding:12px 14px}.head-actions{gap:5px}.key-wrap{gap:5px}.key-label{display:none}.key-input{width:112px}.messages{padding:20px 15px}.msg{max-width:88%}.input-zone{padding:11px}.attach{padding:10px}.send{padding:11px 14px}}
+        @media(max-width:390px){.target{font-size:.9rem}.target-sub{font-size:.68rem}.key-input{width:91px}.input-zone{gap:6px}.msg{max-width:92%}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
     </style>
 </head>
-<body onclick="hideMenu()">
-
-    <div id="toast"></div>
-    <audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-    <input type="file" id="fileInput" style="display: none;" onchange="uploadFile()">
-
-    <div class="sidebar" id="sidebar">
-        <div class="sb-header">
-            <h3>// AGENTS <span style="float:right; cursor:pointer; font-size:12px; color:#555;" onclick="toggleSidebar()">[HIDE]</span></h3>
-            <input type="text" id="searchUser" class="search-box" placeholder="Search Agent / Phone..." onkeyup="fetchUsers()">
-        </div>
-        <div id="userList" class="user-list">
-            <div style="text-align:center; padding:20px; color:#444;">Scanning Network...</div>
-        </div>
-        <div class="sb-footer">
-            <a href="#" onclick="showProfile()" class="sb-btn">IDENTITY</a>
-            <a href="index.php?page=usage" class="sb-btn">USAGE</a>
-            <a href="index.php?page=about" class="sb-btn">ABOUT</a>
-            <a href="logout.php" class="sb-btn" style="border-color:#ff3333; color:#ff3333;">ABORT</a>
-        </div>
-    </div>
-
-    <div class="chat-area">
-        <div class="chat-header">
-            <span onclick="toggleSidebar()" style="cursor:pointer; margin-right:10px;">[MENU]</span>
-            <span id="chatTitle">// SELECT A TARGET</span>
-            <input type="password" id="secretKey" placeholder="KEY" title="Both users must use same key">
-        </div>
-        
-        <div class="messages" id="msgBox">
-            <div style="text-align:center; margin-top:50px; color:#333;">
-                <img src="sdpGhostlink.png" width="64" style="opacity:0.2; margin-bottom:10px;"><br>
-                ENCRYPTED UPLINK STANDBY...
-            </div>
-        </div>
-
-        <div class="input-zone hidden" id="inputZone">
-            <button class="attach-btn" onclick="document.getElementById('fileInput').click()">📎</button>
-            <input type="text" id="msgInput" style="flex:1" placeholder="Type encrypted message...">
-            <button class="send-btn" onclick="sendMessage()">SEND</button>
-        </div>
-        
-        <div id="contextMenu">
-            <div onclick="confirmDelete()">DELETE MESSAGE</div>
-        </div>
-    </div>
-
-    <div id="profileModal" class="modal-overlay hidden">
-        <div class="modal-box">
-            <h3 style="margin-top:0;">EDIT IDENTITY</h3>
-            <input type="text" id="editBio" placeholder="Update Bio" style="width: 90%; margin-bottom: 10px;"><br>
-            <input type="text" id="editPhone" placeholder="Update Phone" style="width: 90%; margin-bottom: 10px;"><br><br>
-            <button class="send-btn" onclick="saveProfile()">SAVE CHANGES</button>
-            <button class="sb-btn" onclick="document.getElementById('profileModal').classList.add('hidden')">CANCEL</button>
-        </div>
-    </div>
-
-    <script>
-        let currentTargetId = null;
-        let refreshInterval = null;
-        let selectedMsgId = null;
-        let lastMsgCount = 0; 
-
-        function showToast(text) {
-            var x = document.getElementById("toast");
-            x.innerText = text;
-            x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-        }
-
-        function checkResponse(data) {
-            if(data.trim() === "ACCESS DENIED") { window.location = "index.php?page=login&error=Session Expired"; return false; }
-            return true;
-        }
-
-        // --- INIT ---
-        fetchUsers();
-        setInterval(fetchUsers, 5000); 
-
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-
-        // --- CORE FUNCTIONS ---
-        function fetchUsers() {
-            let searchVal = document.getElementById('searchUser').value;
-            let formData = new FormData();
-            formData.append('mode', 'get_users');
-            formData.append('search', searchVal);
-            fetch('engine.php', { method: 'POST', body: formData })
-            .then(res => res.text())
-            .then(data => { if(checkResponse(data)) document.getElementById('userList').innerHTML = data; });
-        }
-
-        window.openChat = function(userId, username) {
-            currentTargetId = userId;
-            document.getElementById('chatTitle').innerHTML = "// " + username;
-            document.getElementById('inputZone').classList.remove('hidden');
-            document.getElementById('msgBox').innerHTML = "<div style='text-align:center; color:#555; padding-top:50px;'>Establishing Uplink...</div>";
-            document.getElementById('sidebar').classList.remove('active');
-
-            if(refreshInterval) clearInterval(refreshInterval);
-            lastMsgCount = 0; 
-            fetchMessages();
-            refreshInterval = setInterval(fetchMessages, 3000); 
-        }
-
-        window.sendMessage = function() {
-            let text = document.getElementById('msgInput').value;
-            let key = document.getElementById('secretKey').value;
-            
-            if(text.trim() === "") return;
-            if(key.trim() === "") { showToast("⚠️ SET SECRET KEY FIRST"); document.getElementById('secretKey').focus(); return; }
-
-            let encrypted = CryptoJS.AES.encrypt(text, key).toString();
-            let formData = new FormData();
-            formData.append('mode', 'send_msg');
-            formData.append('target', currentTargetId);
-            formData.append('msg', encrypted);
-
-            fetch('engine.php', { method: 'POST', body: formData })
-            .then(res => res.text())
-            .then(data => {
-                if(checkResponse(data)) {
-                    document.getElementById('msgInput').value = "";
-                    fetchMessages(); 
-                }
-            });
-        }
-
-        // --- UPLOAD LOGIC ---
-        window.uploadFile = function() {
-            let fileInput = document.getElementById('fileInput');
-            if(fileInput.files.length === 0) return;
-            
-            // Client-side size check (25MB)
-            if(fileInput.files[0].size > 25000000) {
-                showToast("❌ File too large (Max 25MB)");
-                return;
-            }
-
-            let formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            document.getElementById('msgInput').value = "[UPLOADING...]";
-
-            fetch('upload.php', { method: "POST", body: formData })
-            .then(res => res.text())
-            .then(data => {
-                let cleanData = data.trim();
-                if(cleanData.startsWith("error:")) {
-                    showToast("❌ " + cleanData);
-                    document.getElementById('msgInput').value = "";
-                } else {
-                    // Send file link as message
-                    document.getElementById('msgInput').value = "FILE:" + cleanData;
-                    sendMessage(); 
-                }
-            });
-        }
-
-        function fetchMessages() {
-            if(!currentTargetId) return;
-            let key = document.getElementById('secretKey').value;
-            let formData = new FormData();
-            formData.append('mode', 'get_msgs');
-            formData.append('target', currentTargetId);
-
-            fetch('engine.php', { method: 'POST', body: formData })
-            .then(res => res.text())
-            .then(html => {
-                if(!checkResponse(html)) return;
-
-                let tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                let newCount = tempDiv.childElementCount;
-
-                if(lastMsgCount > 0 && newCount > lastMsgCount) {
-                    let lastMsg = tempDiv.lastElementChild;
-                    if(lastMsg && lastMsg.classList.contains('received')) {
-                        document.getElementById('notifySound').play().catch(e => {});
-                    }
-                }
-                lastMsgCount = newCount; 
-
-                let messages = tempDiv.querySelectorAll('.msg');
-                messages.forEach(msg => {
-                    let encText = msg.getAttribute('data-enc');
-                    let timeStamp = msg.getAttribute('data-time');
-                    let plainText = "[LOCKED]";
-                    
-                    if(key.trim() !== "") {
-                        try {
-                            let bytes = CryptoJS.AES.decrypt(encText, key);
-                            plainText = bytes.toString(CryptoJS.enc.Utf8);
-                            if(!plainText) plainText = "Wrong Key 🛑";
-                        } catch(e) { plainText = "Decryption Error"; }
-                    } else { plainText = "🔒 Enter Key"; }
-
-                    // --- ROBUST FILE PARSING ---
-                    let cleanText = plainText.trim(); // IMPORTANT: This fixes the receiver view
-                    if(cleanText.startsWith("FILE:")) {
-                        let fileSrc = cleanText.substring(5).trim(); 
-                        let ext = fileSrc.split('.').pop().toLowerCase();
-                        
-                        // IF IMAGE: Show preview with error fallback
-                        if(['jpg','jpeg','png','gif'].includes(ext)) {
-                            msg.innerHTML = `<img src='${fileSrc}' class='chat-img' 
-                                            onclick='window.open(this.src)' 
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                            <a href='${fileSrc}' target='_blank' class='file-link' style='display:none;'>⚠️ IMG LOAD FAILED (CLICK TO VIEW)</a>`;
-                        } else {
-                            msg.innerHTML = `<a href='${fileSrc}' target='_blank' class='file-link'>📎 DOWNLOAD ${ext.toUpperCase()} FILE</a> <br><span style='font-size:10px; color:#ff3333;'>(Auto-Deletes in 5m)</span>`;
-                        }
-                    } else {
-                        msg.innerHTML = cleanText;
-                    }
-                    // Add Timestamp
-                    msg.innerHTML += "<span class='msg-time'>[" + timeStamp + "]</span>";
-                });
-
-                if(document.getElementById('msgBox').childElementCount !== tempDiv.childElementCount) {
-                    document.getElementById('msgBox').innerHTML = tempDiv.innerHTML;
-                    let chatBox = document.getElementById('msgBox');
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            });
-        }
-
-        // --- CONTEXT MENU (RIGHT CLICK) FIX ---
-        window.openMenu = function(e, id, type) {
-            e.preventDefault(); 
-            if(type !== 'sent') { showToast("Cannot delete received msg"); return; } 
-            
-            selectedMsgId = id;
-            let menu = document.getElementById('contextMenu');
-            menu.style.display = 'block';
-            
-            // Position Menu
-            let x = e.clientX; 
-            let y = e.clientY;
-            
-            // Adjust if out of screen
-            if (x + 150 > window.innerWidth) x -= 150;
-            if (y + 50 > window.innerHeight) y -= 50;
-
-            menu.style.left = x + 'px';
-            menu.style.top = y + 'px';
-        }
-
-        function hideMenu() {
-            document.getElementById('contextMenu').style.display = 'none';
-        }
-
-        window.confirmDelete = function() {
-            if(!selectedMsgId) return;
-            if(confirm("Permanently erase data?")) {
-                let formData = new FormData();
-                formData.append('mode', 'delete_msg');
-                formData.append('msg_id', selectedMsgId);
-                fetch('engine.php', { method: 'POST', body: formData })
-                .then(res => res.text())
-                .then(data => { 
-                    if(data.includes("deleted")) { 
-                        showToast("🗑️ MESSAGE DELETED");
-                        let el = document.getElementById('msg_' + selectedMsgId);
-                        if(el) el.remove(); 
-                    } 
-                });
-            }
-            hideMenu();
-        }
-
-        // --- PROFILE ---
-        window.showProfile = function() {
-            document.getElementById('profileModal').classList.remove('hidden');
-            let formData = new FormData();
-            formData.append('mode', 'get_my_profile');
-            fetch('engine.php', { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(data => { 
-                document.getElementById('editBio').value = data.bio; 
-                document.getElementById('editPhone').value = data.phone; 
-            });
-        }
-        window.saveProfile = function() {
-            let bio = document.getElementById('editBio').value;
-            let phone = document.getElementById('editPhone').value;
-            let formData = new FormData();
-            formData.append('mode', 'update_profile');
-            formData.append('bio', bio);
-            formData.append('phone', phone);
-            fetch('engine.php', { method: 'POST', body: formData })
-            .then(() => { 
-                document.getElementById('profileModal').classList.add('hidden'); 
-                showToast("✅ IDENTITY UPDATED"); 
-            });
-        }
-
-        document.getElementById("msgInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") sendMessage();
-        });
-    </script>
+<body>
+<div class="app">
+    <div id="toast" role="status" aria-live="polite"></div>
+    <input type="file" id="fileInput" hidden>
+    <aside class="sidebar glass" id="sidebar">
+        <div class="side-head"><a href="index.php" class="brand"><img src="sdpGhostlink.png" alt=""><div>Ghost<span>Link</span></div></a><p class="subline">A little space for your conversations.</p><input type="search" id="searchUser" class="search" placeholder="Search people…" autocomplete="off"></div>
+        <div class="list-label">Your people</div><div id="userList" class="user-list"><div class="empty">Finding people…</div></div>
+        <div class="side-foot"><a href="#" class="side-link" onclick="showProfile();return false">Profile</a><a href="index.php?page=usage" class="side-link">Guide</a><a href="index.php?page=about" class="side-link">About</a><a href="logout.php" class="side-link abort">Sign out</a></div>
+    </aside>
+    <main class="chat glass">
+        <header class="chat-head"><div class="head-left"><button class="icon-btn mobile-menu" onclick="toggleSidebar()" aria-label="Open contacts">☰</button><div><div class="target" id="chatTitle">Choose someone to chat</div><div class="target-sub" id="chatSubtitle">Your private conversation starts here</div></div></div><div class="head-actions"><label class="key-wrap"><span class="key-label">Shared key</span><input type="password" id="secretKey" class="key-input" placeholder="Enter key" title="Use the same key as your contact" autocomplete="off"></label></div></header>
+        <section class="messages" id="msgBox"><div class="empty"><img src="sdpGhostlink.png" alt=""><br>Select a person to start a conversation.</div></section>
+        <form class="input-zone hidden" id="inputZone"><button type="button" class="attach" id="attachButton" title="Attach a file" aria-label="Attach a file">＋</button><input type="text" id="msgInput" class="input" placeholder="Write a message…" autocomplete="off"><button type="submit" class="send">Send&nbsp; ↗</button></form>
+    </main>
+</div>
+<div id="contextMenu"><div onclick="confirmDelete()">Delete message</div></div>
+<div id="profileModal" class="modal-overlay hidden"><section class="modal glass" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><h2 id="profileTitle">Your profile</h2><input type="text" id="editBio" placeholder="A short bio"><input type="tel" id="editPhone" placeholder="Phone number"><div class="modal-actions"><button class="icon-btn" onclick="closeProfile()">Cancel</button><button class="send" onclick="saveProfile()">Save changes</button></div></section></div>
+<audio id="notifySound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="none"></audio>
+<script>
+let currentTargetId=null, refreshInterval=null, selectedMsgId=null, lastMsgCount=0;
+const $=id=>document.getElementById(id);
+function showToast(message){const toast=$('toast');toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000)}
+function checkResponse(text){if(text.trim()==='ACCESS DENIED'){location.href='index.php?page=login&error=Session%20Expired';return false}return true}
+function toggleSidebar(){$('sidebar').classList.toggle('active')}
+async function postForm(fields){const form=new FormData();for(const [key,value] of Object.entries(fields))form.append(key,value);const response=await fetch('engine.php',{method:'POST',body:form});return response.text()}
+async function fetchUsers(){try{const data=await postForm({mode:'get_users',search:$('searchUser').value});if(checkResponse(data))$('userList').innerHTML=data}catch(e){showToast('Could not load contacts. Try again.')}}
+window.openChat=function(userId,username){currentTargetId=userId;$('chatTitle').textContent=username;$('chatSubtitle').textContent='Messages are encrypted in your browser';$('inputZone').classList.remove('hidden');$('sidebar').classList.remove('active');$('msgBox').innerHTML='<div class="empty">Opening your conversation…</div>';if(refreshInterval)clearInterval(refreshInterval);lastMsgCount=0;fetchMessages();refreshInterval=setInterval(fetchMessages,3000)};
+async function sendMessage(){const text=$('msgInput').value,key=$('secretKey').value;if(!currentTargetId){showToast('Choose someone to chat with first.');return}if(!text.trim())return;if(!key.trim()){showToast('Add your shared key before sending.');$('secretKey').focus();return}if(typeof CryptoJS==='undefined'){showToast('Encryption could not load. Refresh and try again.');return}try{const encrypted=CryptoJS.AES.encrypt(text,key).toString();const result=await postForm({mode:'send_msg',target:currentTargetId,msg:encrypted});if(checkResponse(result)){$('msgInput').value='';await fetchMessages()}}catch(e){showToast('Message could not be sent. Please retry.')}}
+async function uploadFile(){const input=$('fileInput');if(!input.files.length)return;const file=input.files[0];if(file.size>25000000){showToast('File is too large (max 25 MB).');input.value='';return}if(!$('secretKey').value.trim()){showToast('Add your shared key before sharing a file.');input.value='';return}if(!currentTargetId){showToast('Choose someone to chat with first.');input.value='';return}const messageInput=$('msgInput');messageInput.value='Uploading…';try{const form=new FormData();form.append('file',file);const response=await fetch('upload.php',{method:'POST',body:form});const path=(await response.text()).trim();if(path.startsWith('error:')){showToast(path);return}messageInput.value='FILE:'+path;await sendMessage()}catch(e){showToast('Upload failed. Please try again.')}finally{input.value='';messageInput.value=''}}
+function appendMessageContent(message,text){if(text.startsWith('FILE:')){const path=text.slice(5).trim();if(!/^uploads\/[\w./-]+$/.test(path)){message.append(document.createTextNode('Attachment unavailable'));return}const extension=path.split('.').pop().toLowerCase();if(['jpg','jpeg','png','gif'].includes(extension)){const image=document.createElement('img');image.src=path;image.alt='Shared image';image.className='chat-img';image.addEventListener('click',()=>window.open(path,'_blank','noopener,noreferrer'));message.append(image)}else{const link=document.createElement('a');link.href=path;link.target='_blank';link.rel='noopener noreferrer';link.className='file-link';link.textContent='↗ Download '+extension.toUpperCase()+' file';message.append(link)}return}message.append(document.createTextNode(text))}
+async function fetchMessages(){if(!currentTargetId)return;try{const html=await postForm({mode:'get_msgs',target:currentTargetId});if(!checkResponse(html))return;const temp=document.createElement('div');temp.innerHTML=html;const items=[...temp.querySelectorAll('.msg')];if(lastMsgCount>0&&items.length>lastMsgCount&&items.at(-1)?.classList.contains('received'))$('notifySound').play().catch(()=>{});lastMsgCount=items.length;const key=$('secretKey').value;const fragment=document.createDocumentFragment();for(const source of items){const message=document.createElement('div');message.className='msg '+(source.classList.contains('sent')?'sent':'received');message.id=source.id;message.addEventListener('contextmenu',event=>{event.preventDefault();if(!message.classList.contains('sent')){showToast('You can only delete your own messages.');return}selectedMsgId=message.id.replace('msg_','');const menu=$('contextMenu');menu.style.display='block';menu.style.left=Math.min(event.clientX,innerWidth-180)+'px';menu.style.top=Math.min(event.clientY,innerHeight-60)+'px'});const encrypted=source.getAttribute('data-enc')||'';let plain='🔒 Enter your shared key';if(key.trim()){try{plain=CryptoJS.AES.decrypt(encrypted,key).toString(CryptoJS.enc.Utf8)||'Could not decrypt — check the shared key.'}catch(e){plain='Could not decrypt — check the shared key.'}}appendMessageContent(message,plain.trim());const time=document.createElement('span');time.className='msg-time';time.textContent=source.getAttribute('data-time')||'';message.append(time);fragment.append(message)}const box=$('msgBox');const changed=box.childElementCount!==items.length;if(changed){box.replaceChildren(fragment);box.scrollTop=box.scrollHeight}}catch(e){showToast('Could not refresh messages.')}}
+function hideMenu(){$('contextMenu').style.display='none'}window.addEventListener('click',event=>{if(!event.target.closest('#contextMenu'))hideMenu()});window.confirmDelete=async function(){if(!selectedMsgId)return;if(confirm('Delete this message?')){try{const response=await postForm({mode:'delete_msg',msg_id:selectedMsgId});if(response.includes('deleted')){$('msg_'+selectedMsgId)?.remove();showToast('Message deleted.');lastMsgCount=Math.max(0,lastMsgCount-1)}}catch(e){showToast('Could not delete the message.')}}hideMenu()};
+window.showProfile=async function(){$('profileModal').classList.remove('hidden');try{const result=await postForm({mode:'get_my_profile'});if(checkResponse(result)){const data=JSON.parse(result);$('editBio').value=data.bio||'';$('editPhone').value=data.phone||''}}catch(e){showToast('Could not load your profile.')}};window.closeProfile=()=>$('profileModal').classList.add('hidden');window.saveProfile=async function(){try{await postForm({mode:'update_profile',bio:$('editBio').value,phone:$('editPhone').value});closeProfile();showToast('Profile updated.')}catch(e){showToast('Could not save your profile.')}};
+$('inputZone').addEventListener('submit',event=>{event.preventDefault();sendMessage()});$('attachButton').addEventListener('click',()=>$('fileInput').click());$('fileInput').addEventListener('change',uploadFile);$('searchUser').addEventListener('input',fetchUsers);$('secretKey').addEventListener('input',()=>{if(currentTargetId)fetchMessages()});fetchUsers();setInterval(fetchUsers,5000);
+</script>
 </body>
 </html>

@@ -1,32 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>About // GhostLink</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d17">
+    <title>About GhostLink</title>
+    <link rel="icon" href="sdpGhostlink.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0d0d0d; color: #00ff41; font-family: 'Courier New', monospace; padding: 40px; text-align: center; }
-        h1 { border-bottom: 2px solid #00ff41; display: inline-block; padding-bottom: 10px; }
-        .container { max-width: 800px; margin: auto; text-align: left; background: #111; padding: 30px; border: 1px solid #333; }
-        .back-btn { display: inline-block; margin-top: 20px; color: #0d0d0d; background: #00ff41; padding: 10px 20px; text-decoration: none; font-weight: bold; }
+        *{box-sizing:border-box}body{margin:0;min-height:100vh;color:#f3f5fb;font:16px 'DM Sans',sans-serif;background:radial-gradient(ellipse at 14% 12%,rgba(75,115,255,.2),transparent 34%),radial-gradient(ellipse at 90% 85%,rgba(91,232,189,.13),transparent 33%),#090d17}.shell{width:min(960px,calc(100% - 36px));margin:auto}.top{height:88px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff15}.brand{display:flex;align-items:center;gap:10px;font:700 1.1rem 'Space Grotesk',sans-serif;color:white;text-decoration:none}.brand img{width:36px;height:36px;object-fit:contain}.brand span{color:#83ecc4}.back{color:#c4ccda;text-decoration:none;font-size:.9rem}.back:hover{color:#83ecc4}.card{margin:65px auto;padding:clamp(25px,6vw,54px);border:1px solid #ffffff1c;border-radius:25px;background:linear-gradient(145deg,#ffffff14,#ffffff06);box-shadow:0 25px 90px #0005;backdrop-filter:blur(22px)}.tag{display:inline-block;padding:8px 12px;border-radius:30px;background:#83ecc414;border:1px solid #83ecc433;color:#b8f5dd;font-size:.76rem;letter-spacing:.05em}h1,h2{font-family:'Space Grotesk',sans-serif;letter-spacing:-.05em}h1{font-size:clamp(2.7rem,7vw,4.4rem);line-height:1.02;margin:22px 0 15px}h1 span{background:linear-gradient(100deg,#fff,#a4f4d4,#a7b9ff);color:transparent;background-clip:text}.lead{color:#a0a9ba;line-height:1.8;max-width:700px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:32px}.item{padding:21px;border-radius:17px;border:1px solid #ffffff12;background:#ffffff06}.item h2{font-size:1.05rem;letter-spacing:-.02em;margin:0 0 9px}.item p{color:#a0a9ba;line-height:1.7;font-size:.92rem;margin:0}.item a{color:#83ecc4;text-decoration:none}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.button{border-radius:12px;padding:12px 17px;text-decoration:none;font-weight:700;color:#e9edf6;border:1px solid #ffffff20}.button.primary{background:linear-gradient(135deg,#a4f6d5,#7ee5d0);color:#09120f;border:0}@media(max-width:600px){.grid{grid-template-columns:1fr}.card{margin:35px auto}.top{height:72px}}
     </style>
 </head>
 <body>
-    <h1>// PROJECT INFO: GHOSTLINK</h1>
-    <div class="container">
-        <h3>/// MISSION OBJECTIVE</h3>
-        <p>GhostLink is a secure, browser-based communication terminal designed for educational purposes and privacy.</p>
-        
-        <h3>/// SECURITY PROTOCOLS</h3>
-        <ul>
-            <li><strong>End-to-End Encryption:</strong> Messages are encrypted in your browser before they even touch the server. The server admin sees only gibberish.</li>
-            <li><strong>Zero-Knowledge Architecture:</strong> Only the two users holding the "Secret Key" can decipher the data.</li>
-            <li><strong>Stealth Mode:</strong> Minimalistic interface designed to look like a system utility.</li>
-        </ul>
-
-        <h3>/// DEVELOPER LOGS</h3>
-        <p>Built using PHP, MySQL, and JavaScript (CryptoJS Library).</p>
-        <p><strong>Version:</strong> 2.0 (Stable)</p>
-    </div>
-    <br>
-    <a href="dashboard.php" class="back-btn"><< RETURN TO DASHBOARD</a>
+<header class="shell top"><a class="brand" href="index.php"><img src="sdpGhostlink.png" alt=""><span>GhostLink</span></a><a class="back" href="index.php">← Back to home</a></header>
+<main class="shell"><section class="card"><span class="tag">A NOTE FROM THE TEAM</span><h1>A quieter way to<br><span>stay connected.</span></h1><p class="lead">GhostLink is a browser-based messaging project designed to make private, one-to-one conversations feel simple and approachable. Built by S Deva Prasad (SDP), it brings together PHP, MySQL, and browser-side encryption in a lightweight web app.</p><div class="grid"><article class="item"><h2>Thoughtful by design</h2><p>No public timelines or noisy feeds — just a focused place to connect with people you choose.</p></article><article class="item"><h2>Understand the limits</h2><p>Messages are encrypted in your browser with a shared key, but this project has not been independently audited. Please don't rely on it for highly sensitive communication.</p></article><article class="item"><h2>Built with</h2><p>PHP, MySQL, JavaScript, and CryptoJS, with a responsive interface designed for everyday browsers.</p></article><article class="item"><h2>Say hello</h2><p>Share feedback or ask a question at <a href="mailto:sdp.page+site@gmail.com">sdp.page+site@gmail.com</a>.</p></article></div><div class="actions"><a class="button primary" href="index.php?page=register">Create an account →</a><a class="button" href="dashboard.php">Return to messages</a></div></section></main>
 </body>
 </html>

@@ -1,274 +1,95 @@
 <?php
 require 'config.php';
 $page = $_GET['page'] ?? 'home';
-
-// --- ULTIMATE SEO LOGIC (Targets: SDP Page, Deva Prasad, GhostLink) ---
+$pages = ['home', 'usage', 'about', 'login', 'register', 'forgot'];
+if (!in_array($page, $pages, true)) $page = 'home';
 $seo = [
-    'home' => [
-        'title' => 'SDP Page // GhostLink Message App',
-        'desc'  => 'GhostLink is a secure secret message app developed by Deva Prasad (SDP). End-to-end encryption for private communication.'
-    ],
-    'about' => [
-        'title' => 'About Deva Prasad (SDP) // GhostLink Developer',
-        'desc'  => 'Contact Deva Prasad (SDP). Phone: +91 9703771276. Email: sdp.page+site@gmail.com. Developer of the GhostLink Secure Terminal.'
-    ],
-    'usage' => [
-        'title' => 'GhostLink Usage // Secure File Transfer',
-        'desc'  => 'How to use GhostLink Message App. Learn about the Secret Key, Auto-Destruct files, and secure data purging.'
-    ],
-    'login' => [
-        'title' => 'Login // SDP GhostLink',
-        'desc'  => 'Access the GhostLink Terminal. Secure login for the secret message app by SDP.'
-    ],
-    'register' => [
-        'title' => 'Register // GhostLink Identity',
-        'desc'  => 'Create a new anonymous identity for GhostLink.'
-    ]
+    'home' => ['GhostLink — Private messages, beautifully simple', 'A secure, browser-based messaging experience for private conversations.'],
+    'about' => ['About GhostLink — Private messaging, reimagined', 'Learn about GhostLink, its features, and the people behind it.'],
+    'usage' => ['How GhostLink works — A quick guide', 'Learn how to connect with a contact, use your shared key, and send files.'],
+    'login' => ['Sign in — GhostLink', 'Sign in to your GhostLink account.'],
+    'register' => ['Create your account — GhostLink', 'Create a GhostLink identity to start messaging.'],
+    'forgot' => ['Account recovery — GhostLink', 'Recover your GhostLink account.']
 ];
-
-// Fallback if page not defined above
-$current_title = $seo[$page]['title'] ?? 'GhostLink // SDP Page';
-$current_desc  = $seo[$page]['desc']  ?? 'Secure message app by Deva Prasad.';
+[$title, $description] = $seo[$page];
+function e($value) { return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $current_title; ?></title>
-    <meta name="description" content="<?php echo $current_desc; ?>">
-    
-    <meta name="keywords" content="SDP page, Ghostlink sdp, ghostlink message app, Deva Prasad, S Deva Prasad, 9703771276, sdp.page.gd, secret message app">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d17">
+    <meta name="description" content="<?= e($description) ?>">
+    <title><?= e($title) ?></title>
     <link rel="icon" href="sdpGhostlink.png" type="image/png">
-    
-    <?php echo isset($CSS_GLOBAL) ? $CSS_GLOBAL : ''; ?>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "SoftwareApplication",
-          "name": "GhostLink Message App",
-          "operatingSystem": "Web Browser",
-          "applicationCategory": "CommunicationApplication",
-          "url": "https://sdp.page.gd",
-          "author": {
-              "@type": "Person",
-              "name": "S Deva Prasad (SDP)",
-              "url": "https://sdp.page.gd?page=about"
-          }
-        },
-        {
-          "@type": "Person",
-          "name": "S Deva Prasad",
-          "alternateName": "SDP",
-          "jobTitle": "Developer",
-          "telephone": "+91-9703771276",
-          "email": "sdp.page+site@gmail.com",
-          "url": "https://sdp.page.gd"
-        }
-      ]
-    }
-    </script>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* GLOBAL CYBER THEME */
-        body { background-color: #050505; color: #00ff41; font-family: 'Courier Prime', monospace; margin:0; }
-        
-        main { display: block; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        /* NAVIGATION */
-        nav { display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid #003300; background: #020202; }
-        .logo { font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; }
-        
-        /* FIXED CONTRAST */
-        .nav-links a { color: #aaa; text-decoration: none; margin-left: 20px; font-size: 0.9rem; transition: 0.3s; }
-        .nav-links a:hover { color: #00ff41; }
-        .active-link { color: #00ff41 !important; text-decoration: underline; }
-
-        /* BUTTONS & PANELS */
-        .btn { display: inline-block; background: #003300; color: #00ff41; padding: 10px 20px; border: 1px solid #00ff41; text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 10px #00ff41; }
-        
-        .panel { border: 1px solid #003300; padding: 30px; background: #0a0a0a; box-shadow: 0 0 20px rgba(0,50,0,0.5); }
-        
-        /* FORMS */
-        input { width: 100%; padding: 10px; margin: 5px 0 20px; background: #111; border: 1px solid #333; color: white; box-sizing: border-box; }
-        input:focus { border-color: #00ff41; outline: none; }
-        label { font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 5px; }
-
-        /* MANUAL & ABOUT STYLES */
-        .manual-section { margin-bottom: 30px; border-left: 2px solid #00ffff; padding-left: 15px; }
-        .manual-title { color: #fff; font-weight: bold; margin-bottom: 5px; }
-        .manual-text { color: #bbb; font-size: 0.9rem; line-height: 1.5; }
-        .key-highlight { color: #00ffff; border: 1px solid #00ffff; padding: 2px 6px; font-size: 0.8rem; border-radius: 4px; }
-        
-        h3 { margin-top: 25px; color: #fff; border-bottom: 1px solid #333; padding-bottom: 5px; font-size: 1.1rem; }
-        ul { color: #bbb; line-height: 1.6; padding-left: 20px; }
-        li { margin-bottom: 10px; }
-
-        /* TOAST NOTIFICATION */
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #0d0d0d; color: #00ff41;
-            text-align: center; border: 1px solid #00ff41; border-radius: 4px; padding: 15px;
-            position: fixed; z-index: 10000; left: 50%; bottom: 30px; transform: translateX(-50%);
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3); font-weight: bold; font-size: 14px;
-        }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        :root{color-scheme:dark;--bg:#090d17;--panel:rgba(20,27,44,.68);--line:rgba(255,255,255,.11);--text:#f4f6fb;--muted:#a0a9ba;--mint:#78f0c2;--blue:#8ca9ff;--pink:#d6a5ff;--shadow:0 24px 80px rgba(0,0,0,.32)}
+        *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:'DM Sans',sans-serif;background:radial-gradient(ellipse at 10% 12%,rgba(75,115,255,.21),transparent 34%),radial-gradient(ellipse at 92% 18%,rgba(91,232,189,.13),transparent 30%),radial-gradient(ellipse at 56% 100%,rgba(154,95,232,.16),transparent 35%),var(--bg);overflow-x:hidden}
+        body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(to bottom,black,transparent 85%);z-index:-1}
+        a{color:inherit;text-decoration:none}.shell{width:min(1160px,calc(100% - 44px));margin:auto;position:relative}.topbar{height:88px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);animation:fade-down .8s both}.brand{display:flex;align-items:center;gap:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.13rem;letter-spacing:-.04em}.brand img{width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(120,240,194,.35))}.brand em{font-style:normal;color:var(--mint)}.nav{display:flex;align-items:center;gap:30px;color:var(--muted);font-size:.92rem}.nav a{transition:color .2s,transform .2s}.nav a:hover,.nav a.active{color:var(--text);transform:translateY(-1px)}.nav .nav-cta{padding:10px 17px;border-radius:12px;color:#09120f;background:linear-gradient(135deg,#9af4d1,#7ee5d0);font-weight:700;box-shadow:0 8px 24px rgba(120,240,194,.15);transition:transform .2s,box-shadow .2s}.nav .nav-cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(120,240,194,.28)}
+        .hero{min-height:600px;display:grid;grid-template-columns:1.04fr .96fr;align-items:center;gap:65px;padding:70px 0 58px}.hero-copy{animation:rise-in .85s .08s both}.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border:1px solid rgba(120,240,194,.2);border-radius:999px;background:rgba(120,240,194,.07);font-size:.78rem;color:#b8f5dd;letter-spacing:.04em}.pulse{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint);animation:pulse 2s infinite}h1,h2,h3,p{margin-top:0}h1,h2,h3{font-family:'Space Grotesk',sans-serif;letter-spacing:-.05em}h1{font-size:clamp(3.35rem,6.6vw,6.15rem);line-height:.98;margin:23px 0 22px;max-width:680px}h1 span{background:linear-gradient(105deg,#fff 5%,#9ef2d4 52%,#a7b9ff 94%);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{max-width:560px;color:var(--muted);line-height:1.8;font-size:1.06rem;margin-bottom:30px}.actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--line);border-radius:13px;padding:13px 19px;font-weight:700;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}.button:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.27);box-shadow:0 12px 30px rgba(0,0,0,.2)}.button.primary{color:#09120f;border:0;background:linear-gradient(135deg,#a4f6d5,#7de1cd);box-shadow:0 12px 30px rgba(120,240,194,.17)}.button.primary:hover{box-shadow:0 16px 38px rgba(120,240,194,.3)}.button.quiet{color:#d9deeb;background:rgba(255,255,255,.035)}.tiny-note{color:#778196;font-size:.81rem;margin:20px 0 0}
+        .preview-wrap{position:relative;padding:14px;animation:float-card 7s ease-in-out infinite,fade-up .9s .2s both}.orb{position:absolute;width:260px;height:260px;right:4%;top:6%;border-radius:50%;background:linear-gradient(135deg,rgba(126,232,202,.29),rgba(145,133,255,.22));filter:blur(4px);animation:orb-drift 9s ease-in-out infinite alternate}.orb:after{content:"";position:absolute;inset:28px;border:1px solid rgba(255,255,255,.16);border-radius:50%;animation:spin 30s linear infinite}.glass{background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.14);box-shadow:var(--shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}.preview{position:relative;border-radius:24px;padding:22px;transform:rotate(1.4deg);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s}.preview-wrap:hover .preview{transform:rotate(0) translateY(-5px);box-shadow:0 35px 100px rgba(0,0,0,.42)}.preview-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid var(--line)}.preview-id{display:flex;align-items:center;gap:11px;font-weight:700}.avatar{display:grid;place-items:center;width:39px;height:39px;border-radius:13px;background:linear-gradient(145deg,rgba(120,240,194,.3),rgba(140,169,255,.25));color:#d8fff0}.status{font-size:.74rem;color:var(--mint)}.preview-content{display:grid;gap:14px;padding:22px 0}.bubble{max-width:82%;padding:14px 15px;border-radius:16px;background:rgba(255,255,255,.07);color:#e1e6f0;font-size:.87rem;line-height:1.55;animation:message-in .8s both}.bubble.out{justify-self:end;background:linear-gradient(135deg,rgba(120,240,194,.19),rgba(140,169,255,.14));border:1px solid rgba(164,246,213,.14);animation-delay:.45s}.bubble small{display:block;color:#9da8ba;margin-top:8px;font-size:.68rem}.key-note{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.09);background:rgba(7,11,19,.4);border-radius:14px;color:#adb6c7;font-size:.77rem}.key-icon{color:var(--mint);font-size:1.05rem}.preview-input{margin-top:17px;border-radius:12px;padding:12px 14px;background:rgba(3,7,13,.4);border:1px solid rgba(255,255,255,.1);color:#8490a2;font-size:.8rem}
+        .features{padding:30px 0 85px}.section-heading{text-align:center;max-width:640px;margin:0 auto 34px}.section-heading h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:12px}.section-heading p{color:var(--muted);line-height:1.7}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.feature{padding:24px;border-radius:20px;min-height:190px;transition:transform .35s,border-color .35s,background .35s}.feature:hover{transform:translateY(-8px);border-color:rgba(120,240,194,.24);background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045))}.feature-icon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:rgba(120,240,194,.1);color:var(--mint);font-size:1.2rem;margin-bottom:20px}.feature h3{font-size:1.08rem;letter-spacing:-.03em;margin-bottom:9px}.feature p{font-size:.91rem;line-height:1.65;color:var(--muted);margin:0}.cta{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:30px;border-radius:22px;margin-bottom:80px}.cta h2{font-size:1.6rem;margin-bottom:7px}.cta p{margin:0;color:var(--muted)}footer{border-top:1px solid rgba(255,255,255,.08);padding:26px 0 34px;color:#7f899c;font-size:.82rem}.footer-inner{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}.footer-inner a{color:#aab4c7;transition:color .2s}.footer-inner a:hover{color:var(--mint)}
+        .page-main{min-height:calc(100vh - 190px);padding:55px 0 70px}.page-card{max-width:760px;margin:0 auto;border-radius:24px;padding:clamp(24px,5vw,46px);animation:fade-up .7s both}.page-card h1{font-size:clamp(2.4rem,5vw,3.8rem);margin:20px 0 12px}.page-card .intro{color:var(--muted);line-height:1.7}.manual{display:grid;gap:14px;margin-top:27px}.manual-item{padding:19px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);transition:transform .25s,border-color .25s}.manual-item:hover{transform:translateX(5px);border-color:rgba(120,240,194,.22)}.manual-item h3{margin:0 0 8px;font-size:1.02rem;letter-spacing:-.02em}.manual-item p{margin:0;color:var(--muted);font-size:.93rem;line-height:1.65}.form-card{max-width:460px;margin:0 auto;border-radius:24px;padding:34px;animation:fade-up .7s both}.form-card h1{text-align:center;font-size:2.1rem;margin:0 0 8px}.form-card>p{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:27px}.field{margin-bottom:17px}.field label{display:block;color:#c5ccda;font-weight:600;font-size:.84rem;margin-bottom:8px}.field input{width:100%;margin:0;padding:13px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.13);background:rgba(4,8,15,.58);color:var(--text);font:inherit;outline:none;transition:border-color .2s,box-shadow .2s}.field input:focus{border-color:rgba(120,240,194,.65);box-shadow:0 0 0 3px rgba(120,240,194,.1)}.form-card .button{width:100%;font:inherit;margin-top:4px;cursor:pointer}.form-foot{text-align:center;color:var(--muted);font-size:.84rem;margin:20px 0 0;line-height:1.7}.form-foot a{color:var(--mint)}
+        #toast{position:fixed;z-index:20;left:50%;bottom:25px;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:13px 18px;border-radius:13px;border:1px solid rgba(255,255,255,.15);background:rgba(19,26,42,.92);backdrop-filter:blur(18px);box-shadow:var(--shadow);transition:.25s;color:#f5f7fb}#toast.show{opacity:1;transform:translate(-50%,0)}
+        .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s cubic-bezier(.2,.8,.2,1)}.reveal.is-visible{opacity:1;transform:translateY(0)}.feature-grid .feature:nth-child(2){transition-delay:.09s}.feature-grid .feature:nth-child(3){transition-delay:.18s}
+        @keyframes fade-down{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}@keyframes rise-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}@keyframes fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 12px var(--mint)}50%{opacity:.55;box-shadow:0 0 4px var(--mint)}}@keyframes float-card{0%,100%{translate:0 0}50%{translate:0 -10px}}@keyframes orb-drift{from{transform:translate3d(0,0,0) scale(.96)}to{transform:translate3d(-12px,15px,0) scale(1.06)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes message-in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+        @media(max-width:850px){.hero{grid-template-columns:1fr;gap:32px;padding-top:55px}.hero-copy{text-align:center}.hero-copy .lead{margin-left:auto;margin-right:auto}.hero-copy .actions{justify-content:center}.hero h1{margin-left:auto;margin-right:auto}.preview-wrap{max-width:560px;width:100%;margin:auto}.feature-grid{grid-template-columns:1fr 1fr}.cta{align-items:flex-start;flex-direction:column}.cta .button{width:100%}.nav{gap:17px}}
+        @media(max-width:560px){.shell{width:min(100% - 30px,1160px)}.topbar{height:72px}.nav{gap:12px}.nav>a:not(.nav-cta){display:none}.nav .nav-cta{padding:9px 13px}.brand{font-size:1rem}.hero{padding:50px 0 40px;min-height:auto}.hero h1{font-size:3.55rem}.lead{font-size:.98rem}.actions{flex-direction:column;align-items:stretch}.button{width:100%}.preview{padding:16px;transform:none}.feature-grid{grid-template-columns:1fr}.features{padding-bottom:55px}.cta{padding:23px;margin-bottom:50px}.page-main{padding:35px 0 50px}.form-card{padding:25px 20px}.footer-inner{justify-content:center;text-align:center}.footer-inner span{width:100%}}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none}}
     </style>
 </head>
 <body>
-
-<div id="toast"></div>
-
-<nav>
-    <div class="logo">SDP<span style="color:white">PAGE</span></div>
-    <div class="nav-links">
-        <a href="?page=home" class="<?php echo $page=='home'?'active-link':''; ?>">HOME</a>
-        <a href="?page=usage" class="<?php echo $page=='usage'?'active-link':''; ?>">USAGE</a>
-        <a href="?page=about" class="<?php echo $page=='about'?'active-link':''; ?>">ABOUT</a>
-        <a href="?page=login" style="color:#00ff41;">[ ACCESS ]</a>
-    </div>
-</nav>
-
-<main class="container">
-    
-    <?php if($page == 'home'): ?>
-    <div style="text-align:center; padding:80px 20px;">
-        <img src="sdpGhostlink.png" alt="GhostLink Message App Logo by SDP" width="100" height="100" style="margin-bottom:20px; opacity:0.8;">
-        
-        <h1 style="font-size:3rem; margin-bottom:10px;">GHOSTLINK</h1>
-        <h2 style="font-size:1rem; color:#00ffff; font-weight:bold; letter-spacing:1px; margin-bottom:20px;">
-            // SECURE MESSAGE APP BY SDP
-        </h2>
-        
-        <p style="color:#00ff41; max-width:600px; margin:0 auto 40px; font-family: monospace;">
-            ENCRYPTED UPLINK ESTABLISHED<br>
-            <span style="color:#888; font-size: 0.9rem;">The "SDP Page" Secure Terminal.</span>
-        </p>
-        <a href="?page=login" class="btn">INITIALIZE SESSION</a>
-        <br><br>
-        <a href="?page=usage" style="color:#aaa; font-size:0.8rem; text-decoration:none;">[ READ MANUAL ]</a>
-    </div>
-
-    <?php elseif($page == 'usage'): ?>
-    <div class="panel" style="max-width:700px; margin:20px auto;">
-        <h2 style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:20px;">// OPERATIONAL MANUAL</h2>
-        <div class="manual-section">
-            <div class="manual-title">1. SECURE FILE TRANSFER</div>
-            <div class="manual-text">GhostLink supports PDF, DOC, ZIP, VIDEO, AUDIO, IMAGES with <b>5-minute Auto-Destruct</b>.</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<header class="shell topbar">
+    <a class="brand" href="?page=home"><img src="sdpGhostlink.png" alt=""><span>Ghost<em>Link</em></span></a>
+    <nav class="nav" aria-label="Main navigation">
+        <a class="<?= $page === 'home' ? 'active' : '' ?>" href="?page=home">Home</a>
+        <a class="<?= $page === 'usage' ? 'active' : '' ?>" href="?page=usage">How it works</a>
+        <a class="<?= $page === 'about' ? 'active' : '' ?>" href="?page=about">About</a>
+        <a class="nav-cta" href="?page=login">Sign in <span aria-hidden="true">↗</span></a>
+    </nav>
+</header>
+<main class="shell <?= $page === 'home' ? '' : 'page-main' ?>">
+<?php if ($page === 'home'): ?>
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="eyebrow"><span class="pulse"></span> YOUR PRIVATE SPACE, ONLINE</div>
+            <h1>Say it softly.<br><span>Keep it yours.</span></h1>
+            <p class="lead">A calm, simple place for private conversations. Connect with someone, choose a shared secret key, and let your messages stay between you.</p>
+            <div class="actions"><a class="button primary" href="?page=register">Create your space <span aria-hidden="true">→</span></a><a class="button quiet" href="?page=usage">Explore how it works</a></div>
+            <p class="tiny-note">No noisy feeds. Just you and the people you choose.</p>
         </div>
-        <div class="manual-section">
-            <div class="manual-title">2. THE SECRET KEY</div>
-            <div class="manual-text">Enter the same Secret Key as your partner to decrypt messages.</div>
-        </div>
-        <div style="text-align:center; margin-top:30px;">
-            <a href="?page=login" class="btn" style="width:100%">START MESSAGING</a>
-        </div>
-    </div>
-    
-    <?php elseif($page == 'about'): ?>
-    <div class="panel" style="max-width:800px; margin:20px auto;">
-        <h2 style="border-bottom: 2px solid #00ffff; color:#00ffff; padding-bottom: 10px; margin-bottom: 20px;">// ABOUT SDP GHOSTLINK</h2>
-        
-        <h3>/// DEVELOPER PROFILE</h3>
-        <p style="color:#bbb;">
-            GhostLink is a secret message app developed by <b>S Deva Prasad (SDP)</b>.
-            <br><br>
-            It is designed as a secure communication terminal on the <b>SDP Page</b> network.
-        </p>
-        
-        <h3>/// CONTACT INFO</h3>
-        <ul style="list-style:none; padding:0;">
-            <li><strong>Developer:</strong> Deva Prasad</li>
-            <li><strong>Email:</strong> sdp.page+site@gmail.com</li>
-            <li><strong>Phone:</strong> +91 9703771276</li>
-        </ul>
-
-        <h3>/// SECURITY</h3>
-        <p style="color:#bbb;">Features End-to-End Encryption and Zero-Knowledge architecture.</p>
-    </div>
-    
-    <?php elseif($page == 'login'): ?>
-    <div class="panel" style="max-width:400px; margin:50px auto;">
-        <h2 style="text-align:center; margin-bottom:20px;">// SYSTEM ACCESS</h2>
-        <form action="authform.php" method="POST">
-            <label>IDENTITY</label>
-            <input type="text" name="login_input" placeholder="Username or Phone" required>
-            <label>PASSPHRASE</label>
-            <input type="password" name="password" required>
-            <button type="submit" name="login" class="btn" style="width:100%">AUTHENTICATE</button>
-        </form>
-        <div style="text-align:center; margin-top:20px;">
-            <a href="?page=register" style="font-size:0.8rem; color:#aaa;">[ CREATE NEW IDENTITY ]</a><br>
-            <a href="?page=forgot" style="font-size:0.8rem; color:#888;">[ LOST CREDENTIALS ]</a>
-        </div>
-    </div>
-
-    <?php elseif($page == 'register'): ?>
-    <div class="panel" style="max-width:400px; margin:50px auto;">
-        <h2 style="text-align:center; margin-bottom:20px;">// NEW IDENTITY</h2>
-        <form action="authform.php" method="POST">
-            <label>CONTACT UPLINK</label>
-            <input type="number" name="phone" placeholder="Phone Number" required>
-            <label>ALIAS</label>
-            <input type="text" name="username" placeholder="Username" required>
-            <label>VERIFICATION DATE</label>
-            <input type="text" name="dob" placeholder="DOB (DDMMYYYY)" required>
-            <label>SECRET KEY</label>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" name="register" class="btn" style="width:100%">INITIALIZE</button>
-        </form>
-        <div style="text-align:center; margin-top:20px;">
-            <a href="?page=login" style="font-size:0.8rem; color:#aaa;">[ RETURN TO LOGIN ]</a>
-        </div>
-    </div>
-
-    <?php elseif($page == 'forgot'): ?>
-    <div class="panel" style="max-width:400px; margin:50px auto;">
-        <h2 style="text-align:center; margin-bottom:20px;">// RECOVERY</h2>
-        <form action="authform.php" method="POST">
-            <label>VERIFY PHONE</label>
-            <input type="number" name="phone" placeholder="Phone Number" required>
-            <label>VERIFY DOB</label>
-            <input type="text" name="dob" placeholder="DOB (DDMMYYYY)" required>
-            <button type="submit" name="forgot" class="btn" style="width:100%">RECOVER PASSWORD</button>
-        </form>
-        <div style="text-align:center; margin-top:20px;">
-            <a href="?page=login" style="font-size:0.8rem; color:#aaa;">[ CANCEL ]</a>
-        </div>
-    </div>
-    <?php endif; ?>
-
+        <div class="preview-wrap" aria-label="Illustration of a private conversation"><div class="orb"></div><div class="preview glass">
+            <div class="preview-head"><div class="preview-id"><div class="avatar">✦</div><div>Private conversation<div style="font-size:.75rem;color:#9da8ba;font-weight:400;margin-top:3px">A quiet corner for two</div></div></div><span class="status">● Protected</span></div>
+            <div class="preview-content"><div class="bubble">The photos from the trip turned out lovely.<small>Just now</small></div><div class="bubble out">I’ll send them over tonight ✨<small>Just now&nbsp; · &nbsp;Encrypted</small></div><div class="key-note"><span class="key-icon">⌑</span><span>Your shared key stays with you — it isn’t sent with the message.</span></div></div>
+            <div class="preview-input">Write a message… <span style="float:right;color:#9ef2d4">↗</span></div>
+        </div></div>
+    </section>
+    <section class="features"><div class="section-heading reveal"><div class="eyebrow"><span class="pulse"></span> MADE FOR MEANINGFUL MOMENTS</div><h2>A little more private.<br>A lot more personal.</h2><p>Thoughtful tools for the conversations you’d rather keep to yourselves.</p></div>
+        <div class="feature-grid"><article class="feature glass reveal"><div class="feature-icon">⌑</div><h3>Your key, your choice</h3><p>Choose a shared secret key with your contact. Messages are encrypted in your browser before they are sent.</p></article><article class="feature glass reveal"><div class="feature-icon">◉</div><h3>One-to-one, by design</h3><p>Find a contact and start a focused conversation without feeds, public timelines, or extra noise.</p></article><article class="feature glass reveal"><div class="feature-icon">↗</div><h3>Share more than words</h3><p>Send supported files right from the chat. Uploaded files are configured to be cleaned up after five minutes.</p></article></div>
+    </section>
+    <section class="cta glass reveal"><div><h2>Make room for a better conversation.</h2><p>Create your GhostLink identity and start with someone you trust.</p></div><a class="button primary" href="?page=register">Get started <span aria-hidden="true">→</span></a></section>
+<?php elseif ($page === 'usage'): ?>
+    <section class="page-card glass"><div class="eyebrow"><span class="pulse"></span> A QUICK GUIDE</div><h1 style="margin-top:20px">How GhostLink works</h1><p class="intro">A few simple steps to get your private conversation going.</p><div class="manual"><article class="manual-item"><h3>01 &nbsp; Create your identity</h3><p>Register an account, then sign in to open your messaging space.</p></article><article class="manual-item"><h3>02 &nbsp; Find your contact</h3><p>Use the agent list or search to find the person you want to talk to.</p></article><article class="manual-item"><h3>03 &nbsp; Agree on a secret key</h3><p>Choose a strong shared key together and enter the same key in your chat. Messages are encrypted in your browser before they reach the server. Keep the key private and never send it in chat.</p></article><article class="manual-item"><h3>04 &nbsp; Send a message or file</h3><p>Write a message or attach a supported file. Uploaded files are configured for automatic cleanup after five minutes; avoid treating this as guaranteed secure deletion.</p></article></div><div class="actions" style="margin-top:26px"><a class="button primary" href="?page=register">Create your account →</a><a class="button quiet" href="?page=login">I already have an account</a></div></section>
+<?php elseif ($page === 'about'): ?>
+    <section class="page-card glass"><div class="eyebrow"><span class="pulse"></span> A NOTE FROM THE TEAM</div><h1 style="margin-top:20px">About GhostLink</h1><p class="intro">GhostLink is a browser-based messaging project designed to make private, one-to-one conversations feel simple and approachable.</p><div class="manual"><article class="manual-item"><h3>Built with care</h3><p>Created by S Deva Prasad (SDP), GhostLink brings together PHP, MySQL, and browser-side encryption in a lightweight web app.</p></article><article class="manual-item"><h3>Privacy, with clear limits</h3><p>Messages are encrypted in the browser using a shared key, but the current app should not be considered independently audited or a guarantee of end-to-end security. Protect your account credentials and shared key.</p></article><article class="manual-item"><h3>Get in touch</h3><p>Questions or feedback? Email <a href="mailto:sdp.page+site@gmail.com" style="color:var(--mint)">sdp.page+site@gmail.com</a>.</p></article></div></section>
+<?php elseif ($page === 'login'): ?>
+    <section class="form-card glass"><div class="eyebrow" style="display:flex;width:max-content;margin:0 auto 18px"><span class="pulse"></span> WELCOME BACK</div><h1>Sign in</h1><p>Pick up where your conversations left off.</p><form action="authform.php" method="POST"><div class="field"><label for="login_input">Username or phone</label><input id="login_input" type="text" name="login_input" autocomplete="username" placeholder="Your username or phone" required></div><div class="field"><label for="password">Password</label><input id="password" type="password" name="password" autocomplete="current-password" required></div><button class="button primary" type="submit" name="login">Sign in securely →</button></form><p class="form-foot"><a href="?page=forgot">Forgot your password?</a><br><br>New to GhostLink? <a href="?page=register">Create an account</a></p></section>
+<?php elseif ($page === 'register'): ?>
+    <section class="form-card glass"><div class="eyebrow" style="display:flex;width:max-content;margin:0 auto 18px"><span class="pulse"></span> YOUR SPACE STARTS HERE</div><h1>Create an account</h1><p>Set up your GhostLink identity in a moment.</p><form action="authform.php" method="POST"><div class="field"><label for="username">Username</label><input id="username" type="text" name="username" autocomplete="username" placeholder="Choose a username" required></div><div class="field"><label for="phone">Phone</label><input id="phone" type="tel" name="phone" autocomplete="tel" placeholder="Phone number" required></div><div class="field"><label for="dob">Date of birth</label><input id="dob" type="text" name="dob" placeholder="DDMMYYYY" required></div><div class="field"><label for="new_password">Password</label><input id="new_password" type="password" name="password" autocomplete="new-password" placeholder="Create a password" required></div><button class="button primary" type="submit" name="register">Create account →</button></form><p class="form-foot">Already have an account? <a href="?page=login">Sign in</a></p></section>
+<?php elseif ($page === 'forgot'): ?>
+    <section class="form-card glass"><div class="eyebrow" style="display:flex;width:max-content;margin:0 auto 18px"><span class="pulse"></span> ACCOUNT RECOVERY</div><h1>Recover access</h1><p>Verify your account details to continue.</p><form action="authform.php" method="POST"><div class="field"><label for="recovery_phone">Phone</label><input id="recovery_phone" type="tel" name="phone" autocomplete="tel" placeholder="Phone number" required></div><div class="field"><label for="recovery_dob">Date of birth</label><input id="recovery_dob" type="text" name="dob" placeholder="DDMMYYYY" required></div><button class="button primary" type="submit" name="forgot">Continue →</button></form><p class="form-foot"><a href="?page=login">Back to sign in</a></p></section>
+<?php endif; ?>
 </main>
-
-<footer style="text-align:center; margin-top:50px; color:#555; border-top:1px solid #111; padding:20px; font-size: 0.8rem;">
-    GHOSTLINK MESSAGE APP v2.2<br>
-    DEVELOPED BY: <span style="color:#00ff41;">S Deva Prasad (SDP)</span><br><br>
-    EMAIL: <a href="mailto:sdp.page+site@gmail.com" style="color:#00ff41; text-decoration:none;">sdp.page+site@gmail.com</a> <br>
-    PHONE: <a href="tel:+919703771276" style="color:#00ff41; text-decoration:none;">+91 9703771276</a>
-</footer>
-
+<footer><div class="shell footer-inner"><span>© <?= date('Y') ?> GhostLink · Made by S Deva Prasad</span><span><a href="?page=usage">How it works</a> &nbsp;·&nbsp; <a href="?page=about">About</a> &nbsp;·&nbsp; <a href="mailto:sdp.page+site@gmail.com">Contact</a></span></div></footer>
 <script>
-function showToast(text) {
-    var x = document.getElementById("toast");
-    x.innerText = text;
-    x.className = "show";
-    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 4000);
-    window.history.replaceState({}, document.title, window.location.pathname + window.location.search.split('&')[0]);
-}
-window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.has('error')) { showToast("ERROR: " + urlParams.get('error')); }
-    if(urlParams.has('msg')) { showToast(urlParams.get('msg')); }
-};
+function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');window.setTimeout(()=>toast.classList.remove('show'),4000)}
+window.addEventListener('DOMContentLoaded',()=>{const params=new URLSearchParams(location.search);if(params.has('error'))showToast('Please check your details and try again.');else if(params.has('msg'))showToast(params.get('msg'));const items=document.querySelectorAll('.reveal');if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}}),{threshold:.12});items.forEach(item=>observer.observe(item))}else{items.forEach(item=>item.classList.add('is-visible'))}});
 </script>
-
 </body>
 </html>
