@@ -1,4 +1,4 @@
--- GhostLink database bootstrap for a new MySQL 8+ installation.
+-- SDP Link database bootstrap for a new MySQL 8+ installation.
 -- Create the database/user through your hosting control panel first, then select that database here.
 SET NAMES utf8mb4;
 
