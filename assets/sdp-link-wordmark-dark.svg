@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 220" role="img" aria-labelledby="title">
+  <title id="title">SDP Link wordmark dark</title>
+  <defs>
+    <linearGradient id="gold" x1="130" y1="20" x2="460" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF2C9"/>
+      <stop offset=".52" stop-color="#D9B76E"/>
+      <stop offset="1" stop-color="#A77C35"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12 12)">
+    <rect width="196" height="196" rx="54" fill="#0C1422"/>
+    <rect x="1" y="1" width="194" height="194" rx="53" fill="none" stroke="#EAD8A5" stroke-opacity=".42" stroke-width="2"/>
+    <path d="M78 72L48 102a28 28 0 0 0 40 40l22-22a28 28 0 0 0 0-40" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M118 124l17-17a28 28 0 0 0-40-40l-22 22a28 28 0 0 0 0 40" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M82 130l42-42" fill="none" stroke="#FFF2C9" stroke-opacity=".8" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(240 36)">
+    <text x="0" y="90" font-family="Segoe UI, Arial, sans-serif" font-size="78" font-weight="700" fill="#F5F7FB" letter-spacing="-3">SDP</text>
+    <text x="256" y="90" font-family="Segoe UI, Arial, sans-serif" font-size="78" font-weight="600" fill="url(#gold)" letter-spacing="-3">Link</text>
+    <text x="2" y="128" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="500" fill="#9AA8BD" letter-spacing="7">PRIVATE MESSAGING</text>
+  </g>
+</svg>
