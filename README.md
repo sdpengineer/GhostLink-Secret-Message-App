@@ -1,23 +1,20 @@
-
-# GhostLink // Secret Message App
+# SDP Link // Secret Message App
 
 ### Developed by S Deva Prasad (SDP)
 
-**GhostLink** is a secure, zero-knowledge communication terminal designed for privacy. It features end-to-end encryption and auto-destruct file sharing.
+**SDP Link** is a browser-based private messaging project. Messages are encrypted in the browser using a shared key. The project has not been independently audited; review the security notes in the app before using it for sensitive communication.
 
-## 🚀 Live Demo
-**[Click here to access GhostLink](https://sdp.page.gd)**
+## Live Demo
+[Open SDP Link](https://sdp.page.gd)
 
-## 🛡️ Security Features
-* **End-to-End Encryption:** Messages are encrypted in the browser using AES.
-* **Zero-Knowledge:** The server never sees the plain text or the Secret Key.
-* **Auto-Destruct:** All uploaded files (Images, PDF, Video) are permanently wiped from the server every 5 minutes.
-* **Anonymous Identity:** No email or personal data required to register.
+## Brand assets
+The premium SVG brand kit is in `assets/`:
+- `sdp-link-icon-dark.svg` and `sdp-link-icon-light.svg` for app icons.
+- `sdp-link-wordmark-dark.svg` and `sdp-link-wordmark-light.svg` for horizontal branding.
 
-## 👨‍💻 Developer Info
-* **Developer:** S Deva Prasad (SDP)
-* **Contact:** sdp.page+site@gmail.com
-* **Project Status:** Active (v2.2)
+## Developer
+- **Developer:** S Deva Prasad (SDP)
+- **Contact:** sdp.page+site@gmail.com
 
 ---
 © 2025 S Deva Prasad. All Rights Reserved.

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">SDP Link icon light</title>
+  <defs>
+    <linearGradient id="bgLight" x1="64" y1="42" x2="448" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F3EA"/>
+      <stop offset="1" stop-color="#E9E1D0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="100" y1="80" x2="418" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C99638"/>
+      <stop offset="0.52" stop-color="#B17C2E"/>
+      <stop offset="1" stop-color="#7E5220"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="12" width="488" height="488" rx="130" fill="url(#bgLight)"/>
+  <rect x="13" y="13" width="486" height="486" rx="129" fill="none" stroke="#B78A47" stroke-opacity=".34" stroke-width="2"/>
+  <path d="M206 185L171 220a62 62 0 0 0 88 88l47-47a62 62 0 0 0 0-88" fill="none" stroke="url(#gold)" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M306 327l35-35a62 62 0 0 0-88-88l-47 47a62 62 0 0 0 0 88" fill="none" stroke="url(#gold)" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M212 300l88-88" fill="none" stroke="#8B6227" stroke-opacity=".8" stroke-width="19" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="205" fill="none" stroke="#B78A47" stroke-opacity=".11" stroke-width="2"/>
+</svg>
