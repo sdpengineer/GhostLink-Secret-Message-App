@@ -111,13 +111,12 @@ if ($mode === 'get_msgs') {
     $peer = filter_var($_POST['target'] ?? null, FILTER_VALIDATE_INT);
     if (!$peer || $peer === $me) { http_response_code(400); exit('Invalid conversation'); }
 
-    $read = $conn->prepare('INSERT IGNORE INTO message_reads (message_id, user_id) SELECT id, ?, FROM messages WHERE sender_id = ? AND receiver_id = ? AND view_once = 0');
-    // Keep SQL's SELECT list valid while marking regular incoming messages as read.
+    // Mark regular incoming messages as read before returning the conversation.
     $read = $conn->prepare('INSERT IGNORE INTO message_reads (message_id, user_id) SELECT id, ? FROM messages WHERE sender_id = ? AND receiver_id = ? AND view_once = 0');
     $read->bind_param('iii', $me, $peer, $me);
     $read->execute();
 
-    $stmt = $conn->prepare('SELECT id, sender_id, message, timestamp, view_once FROM messages WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND (view_once = 0 OR sender_id = ? OR viewed_at IS NULL) ORDER BY timestamp ASC');
+    $stmt = $conn->prepare('SELECT id, sender_id, message, timestamp, view_once FROM messages WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND (view_once = 0 OR (view_once = 1 AND (receiver_id <> ? OR viewed_at IS NULL))) ORDER BY timestamp ASC, id ASC');
     $stmt->bind_param('iiiii', $me, $peer, $peer, $me, $me);
     $stmt->execute();
     $messages = $stmt->get_result();
@@ -144,7 +143,7 @@ if ($mode === 'get_msgs') {
             $reactions[] = ['emoji' => $reaction['reaction'], 'count' => (int) $reaction['reaction_count']];
         }
         $reactionData = gl_escape(json_encode($reactions, JSON_UNESCAPED_UNICODE));
-        echo "<article id='msg_$id' class='msg " . ($mine ? 'sent' : 'received') . "' data-enc='$cipher' data-date='$date' data-time='$time' data-view-once='" . ($once ? '1' : '0') . "' data-read='$readMark' data-reactions='$reactionData'>Encrypted</article>";
+        echo "<article id='msg_$id' class='msg " . ($mine ? 'sent' : 'received') . "' data-enc='$cipher' data-date='$date' data-time='$time' data-view-once='" . ($once ? '1' : '0') . "' data-read='$readMark' data-reactions='$reactionData'></article>";
     }
     exit;
 }
